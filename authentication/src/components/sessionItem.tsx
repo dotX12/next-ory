@@ -15,16 +15,16 @@ interface SessionItemProps {
 
 export default function SessionItem({ session, showInvalidate, invalidateSession }: SessionItemProps) {
     const [result, setResult] = useState<IResult | null>(null)
-    
+
     useEffect(() => {
         if (!session.devices || session.devices.length < 1) {
             return;
         }
-        
+
         const device = session.devices[0]
 
-            const parser = new UAParser(device.user_agent);
-            setResult(parser.getResult());
+        const parser = new UAParser(device.user_agent);
+        setResult(parser.getResult());
 
     }, [setResult, session])
 
