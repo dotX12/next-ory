@@ -70,7 +70,7 @@ function Error() {
                 </CardContent>
             </Card>
             <Button asChild>
-            <Link href="/" className="inline-flex space-x-2" passHref>
+            <Link prefetch={false} href="/" className="inline-flex space-x-2" passHref>
                     Go back
                 </Link>
             </Button>
