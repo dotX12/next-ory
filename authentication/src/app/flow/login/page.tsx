@@ -27,7 +27,7 @@ function Login() {
 
     const flowId = params.get('flow') ?? undefined;
     const aal = params.get('aal') ?? undefined;
-    const refresh = Boolean(params.get('refresh')) ? true : undefined;
+    const refresh = Boolean(params.get('refresh')) ? true : true;
     const returnTo = params.get('return_to') ?? undefined;
     const loginChallenge = params.get('login_challenge') ?? undefined;
 
@@ -154,7 +154,7 @@ function Login() {
                 <div className="flex flex-col">
                     {flow ? (
                         <Button variant="link" asChild>
-                            <Link href={{ pathname: '/flow/recovery', query: { return_to: flow.return_to } }}
+                            <Link prefetch={false} href={{ pathname: '/flow/recovery', query: { return_to: flow.return_to } }}
                                   className="text-orange-600" passHref>
                                 Forgot your password?
                             </Link>
@@ -164,7 +164,7 @@ function Login() {
                     )}
                     {flow ? (
                         <Button variant="link" asChild disabled={!flow}>
-                            <Link href={{ pathname: '/flow/registration', query: { return_to: flow.return_to } }}
+                            <Link prefetch={false} href={{ pathname: '/flow/registration', query: { return_to: flow.return_to } }}
                                   className="inline-flex space-x-2" passHref>
                                 Create an account
                             </Link>
