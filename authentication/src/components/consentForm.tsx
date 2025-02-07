@@ -1,43 +1,110 @@
 'use client';
 
-import { OAuth2ConsentRequest, Session } from '@ory/client';
-import React, { useEffect, useState } from 'react';
-import { kratos } from '@/ory';
-import { useRouter } from 'next/navigation';
+import {OAuth2ConsentRequest, Session} from '@ory/client';
+import React, {useEffect, useState} from 'react';
+import {kratos} from '@/ory';
+import {useRouter} from 'next/navigation';
 import Image from 'next/image';
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
+import {CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
+import {Checkbox} from '@/components/ui/checkbox';
+import {Label} from '@/components/ui/label';
+import {Separator} from '@/components/ui/separator';
+import {Button} from '@/components/ui/button';
+import {toast} from 'sonner';
+import {AcceptConsentRequest, RejectConsentRequest} from "@/models/consentRequest";
 
 interface ConsentFormProps {
     request: OAuth2ConsentRequest;
-    onAcceptAction: (challenge: string, scopes: string[], remember: boolean) => void;
-    onRejectAction: (challenge: string) => void;
+    consentChallenge: string;
+    redirectTo?: string;
 }
 
-export default function ConsentForm(
-    {
-        request,
-        onAcceptAction,
-        onRejectAction,
-    }: ConsentFormProps,
-) {
-
+export default function ConsentForm({request, consentChallenge, redirectTo}: ConsentFormProps) {
     const router = useRouter();
-
     const [session, setSession] = useState<Session | undefined>();
-
     const [remember, setRemember] = useState<boolean>(false);
     const [requestedScopes, setRequestedScopes] = useState<string[]>(request.requested_scope ?? []);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    console.debug("ConsentForm");
+
+    useEffect(() => {
+        if (redirectTo) {
+            window.location.href = redirectTo;
+        } else {
+            setIsLoading(false);
+        }
+    }, [redirectTo, router]);
 
     useEffect(() => {
         kratos
             .toSession()
-            .then(({ data }) => setSession(data))
+            .then(({data}) => setSession(data))
             .catch(() => router.push('/flow/login'));
     }, [router]);
+
+    const onAccept = async () => {
+        const consentData: AcceptConsentRequest = {
+            action: 'accept',
+            consentChallenge: consentChallenge,
+            scopes: requestedScopes,
+            remember: remember,
+        };
+
+        try {
+            const response = await fetch('/api/consent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors',
+                body: JSON.stringify(consentData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                window.location.href = data.redirect_to;
+            } else {
+                toast.error(data.error || 'Something unexpected went wrong.');
+            }
+        } catch (error) {
+            toast.error('Something unexpected went wrong.');
+        }
+    };
+
+    const onReject = async () => {
+        const consentData: RejectConsentRequest = {
+            action: 'reject',
+            consentChallenge: consentChallenge,
+        };
+
+        try {
+            const response = await fetch('/api/consent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors',
+                body: JSON.stringify(consentData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                router.push(data.redirect_to);
+            } else {
+                toast.error(data.error || 'Something unexpected went wrong.');
+            }
+        } catch (error) {
+            toast.error('Something unexpected went wrong.');
+        }
+    };
+
+    if (isLoading) {
+        console.debug("ConsentForm: Loading");
+        return <div>Loading...</div>;
+    }
 
     return (
         <>
@@ -106,12 +173,12 @@ export default function ConsentForm(
             <CardFooter className="flex w-full space-x-2 justify-end">
                 <Button
                     variant="outline"
-                    onClick={() => onRejectAction(request.challenge)}>
+                    onClick={onReject}>
                     Reject
                 </Button>
                 <Button
                     variant="default"
-                    onClick={() => onAcceptAction(request.challenge, requestedScopes, remember)}>
+                    onClick={onAccept}>
                     Accept
                 </Button>
             </CardFooter>
