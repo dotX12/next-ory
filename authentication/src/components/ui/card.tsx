@@ -1,11 +1,13 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import {Suspense} from "react";
 
 const Card = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
+    <Suspense>
     <div
         ref={ref}
         className={cn(
@@ -14,6 +16,7 @@ const Card = React.forwardRef<
         )}
         {...props}
     />
+    </Suspense>
 ));
 Card.displayName = 'Card';
 
