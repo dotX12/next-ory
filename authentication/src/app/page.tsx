@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { Suspense } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AccountSettings from '@/components/accountSettings';
 import { HandleError, kratos, LogoutLink } from '@/ory';
