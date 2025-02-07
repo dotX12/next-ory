@@ -8,7 +8,7 @@ interface Props {
 
 export const NodeImage = ({ node, attributes }: Props) => {
     return (
-        <Image
+        <img
             src={attributes.src}
             width={200}
             alt={node.meta.label?.text || 'Image'}
