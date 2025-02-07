@@ -140,6 +140,7 @@ function Registration() {
                 flow ?
                     <Button variant="link" asChild disabled={!flow}>
                         <Link
+                            prefetch={false}
                             href={{ pathname: '/flow/login', query: { return_to: flow.return_to } }}
                             className="inline-flex space-x-2"
                             passHref>
