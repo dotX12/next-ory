@@ -114,7 +114,7 @@ export default function ConsentForm({request, consentChallenge, redirectTo}: Con
                    src="/mt-logo-orange.png"
                    alt="Markus Thielker Intranet"/>
             <CardHeader className="flex items-center text-center space-y-4">
-                <CardTitle>Welcome {session?.identity?.traits.name}</CardTitle>
+                <CardTitle>Welcome {renderName(session?.identity?.traits.name)}</CardTitle>
                 <CardDescription className="max-w-xs">
                     The application {request?.client?.client_name} requests access to the following permissions:
                 </CardDescription>
@@ -185,3 +185,19 @@ export default function ConsentForm({request, consentChallenge, redirectTo}: Con
         </>
     );
 }
+
+function renderName(name: any): string {
+    if (typeof name === 'string') {
+        return name;
+    }
+
+    if (typeof name === 'object' && name !== null) {
+        if ('first' in name && 'last' in name) {
+            return `${name.first} ${name.last}`;
+        }
+        return Object.values(name).join(' ');
+    }
+
+    return '';
+}
+
