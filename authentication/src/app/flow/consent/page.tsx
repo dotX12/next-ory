@@ -10,7 +10,7 @@ import {cookies} from "next/headers";
 export const dynamic = 'force-dynamic';
 
 interface ConsentPageProps {
-    consent_challenge: string
+    consent_challenge: string,
 }
 
 export default async function ConsentPage(props: {
