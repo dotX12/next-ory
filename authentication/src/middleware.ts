@@ -62,7 +62,6 @@ export async function middleware(request: NextRequest) {
 
         let loginUrl = `${derivedOrigin}/flow/login`
 
-        // Собираем query-параметры
         const sp = new URLSearchParams()
         if (loginChallenge) {
             sp.set('login_challenge', loginChallenge)
