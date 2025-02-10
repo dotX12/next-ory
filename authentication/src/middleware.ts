@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { getFrontendApi } from '@/ory/sdk/server'
 
 
@@ -29,7 +28,7 @@ function getOriginalUrl(request: NextRequest): string {
 
 export async function middleware(request: NextRequest) {
     const api = await getFrontendApi()
-    const cookieStore = await cookies()
+    const cookieStore = request.cookies;
 
     const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'localhost:3000'
     const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
